@@ -1,0 +1,23 @@
+{
+  "name": "badgerdao-subgraph",
+  "version": "0.1.0",
+  "repository": "https://github.com/trungtin/badgerdao-subgraph",
+  "license": "MIT",
+  "scripts": {
+    "create": "graph create badgerdao --node https://api.thegraph.com/deploy/",
+    "create-local": "graph create badgerdao --node http://127.0.0.1:8020",
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy badgerdao --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy-local": "graph deploy badgerdao --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
+    "remove-local": "graph remove badgerdao --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.21.1",
+    "@graphprotocol/graph-ts": "^0.20.1"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0"
+  }
+}

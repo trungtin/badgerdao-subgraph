@@ -1,0 +1,189 @@
+specVersion: 0.0.3
+description: BadgerDAO subgraph
+repository: https://github.com/trungtin/badgerdao-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: VaultRegistry
+    network: mainnet
+    source:
+      address: "0xfda7eb6f8b7a9e9fcfd348042ae675d1d652454f"
+      abi: VaultRegistry
+      startBlock: 13006329
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Token
+      abis:
+        # 0x6b64e4900b0aad6fa63a994b38d11f49d0cf2623
+        - name: VaultRegistry
+          file: ./abis/VaultRegistry.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: BadgerSett
+          file: ./abis/BadgerSett.json
+        - name: BadgerController
+          file: ./abis/BadgerController.json
+        - name: BadgerStrategy
+          file: ./abis/BadgerStrategy.json
+      eventHandlers:
+        - event: AddKey(string)
+          handler: handleAddKey
+        - event: AddVersion(string)
+          handler: handleAddVersion
+        - event: NewVault(address,string,address)
+          handler: handleNewVault
+        - event: PromoteVault(address,string,address,uint8)
+          handler: handlePromoteVault
+        - event: RemoveVault(address,string,address)
+          handler: handleRemoveVault
+        - event: DemoteVault(address,string,address,uint8)
+          handler: handleDemoteVault
+        - event: Set(string,address)
+          handler: handleSet
+      # file: ./src/mapping.ts
+      file: ./src/handlers/registry-handler.ts
+
+templates:
+  - kind: ethereum/contract
+    name: SettVault
+    network: mainnet
+    source:
+      abi: BadgerSett
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Sett
+        # - User
+        # - Token
+        # - UserSettBalance
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: BadgerSett
+          file: ./abis/BadgerSett.json
+        # 0x63cF44B2548e4493Fd099222A1eC79F3344D9682
+        - name: BadgerController
+          file: ./abis/BadgerController.json
+        # unknown
+        - name: BadgerStrategy
+          file: ./abis/BadgerStrategy.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/handlers/sett-handler.ts
+  - kind: ethereum/contract
+    name: AffiliateSettVault
+    network: mainnet
+    source:
+      abi: BadgerAffiliateSett
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Sett
+        - User
+        - Token
+        - UserSettBalance
+        - Strategy
+        - Controller
+      abis:
+        - name: BadgerAffiliateSett
+          file: ./abis/BadgerAffiliateSett.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: BadgerSett
+          file: ./abis/BadgerSett.json
+        - name: BadgerController
+          file: ./abis/BadgerController.json
+        - name: BadgerStrategy
+          file: ./abis/BadgerStrategy.json
+      eventHandlers:
+        - event: Burn(indexed address,uint256)
+          handler: handleBurn
+        - event: Deposit(indexed address,uint256)
+          handler: handleDeposit
+        - event: Mint(indexed address,uint256)
+          handler: handleMint
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        - event: UpdateGuestList(address)
+          handler: handleUpdateGuestList
+        - event: Withdraw(indexed address,uint256)
+          handler: handleWithdraw
+      file: ./src/handlers/sett-affiliate-handler.ts
+  - kind: ethereum/contract
+    name: BadgerStrategy
+    network: mainnet
+    source:
+      abi: BadgerStrategy
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Sett
+        - User
+        - Token
+        - UserSettBalance
+        - Strategy
+        - Controller
+      abis:
+        - name: BadgerStrategy
+          file: ./abis/BadgerStrategy.json
+        - name: BadgerController
+          file: ./abis/BadgerController.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: BadgerSett
+          file: ./abis/BadgerSett.json
+      eventHandlers:
+        - event: ExtraRewardsTokenSet(indexed address,uint256,uint256,uint256,address,uint256)
+          handler: handleExtraRewardsTokenSet
+        - event: Harvest(uint256,indexed uint256)
+          handler: handleHarvest
+        - event: Paused(address)
+          handler: handlePaused
+        - event: PerformanceFeeGovernance(indexed address,indexed address,uint256,indexed uint256,uint256)
+          handler: handlePerformanceFeeGovernance
+        - event: PerformanceFeeStrategist(indexed address,indexed address,uint256,indexed uint256,uint256)
+          handler: handlePerformanceFeeStrategist
+        - event: SetController(address)
+          handler: handleSetController
+        - event: SetGovernance(address)
+          handler: handleSetGovernance
+        - event: SetPerformanceFeeGovernance(uint256)
+          handler: handleSetPerformanceFeeGovernance
+        - event: SetPerformanceFeeStrategist(uint256)
+          handler: handleSetPerformanceFeeStrategist
+        - event: SetStrategist(address)
+          handler: handleSetStrategist
+        - event: SetWithdrawalFee(uint256)
+          handler: handleSetWithdrawalFee
+        - event: Tend(uint256)
+          handler: handleTend
+        - event: TendState(uint256,uint256,uint256)
+          handler: handleTendState
+        - event: TokenSwapPathSet(address,address,address[])
+          handler: handleTokenSwapPathSet
+        - event: TreeDistribution(indexed address,uint256,indexed uint256,uint256)
+          handler: handleTreeDistribution
+        - event: HarvestState(uint256,uint256,uint256,uint256,uint256,uint256,uint256)
+          handler: handleSushiTreeDistribution
+        - event: Unpaused(address)
+          handler: handleUnpaused
+        - event: Withdraw(uint256)
+          handler: handleWithdraw
+        - event: WithdrawAll(uint256)
+          handler: handleWithdrawAll
+        - event: WithdrawOther(address,uint256)
+          handler: handleWithdrawOther
+        - event: WithdrawState(uint256,uint256,uint256,uint256)
+          handler: handleWithdrawState
+      file: ./src/handlers/strategy-handler.ts
